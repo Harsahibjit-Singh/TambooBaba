@@ -14,7 +14,12 @@ export default function Home() {
   const featuresRef = useRef([]);
   const ctaRef = useRef();
   const [particles, setParticles] = useState([]);
-
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // Prevent scroll when menu open
+useEffect(() => {
+  document.body.style.overflow = isMenuOpen ? 'hidden' : '';
+  return () => { document.body.style.overflow = ''; };
+}, [isMenuOpen]);
 
 useEffect(() => {
   const generatedParticles = [...Array(20)].map(() => ({
@@ -79,8 +84,9 @@ useEffect(() => {
   }, []);
 
   const toggleMenu = () => {
-    document.body.classList.toggle('menu-open');
-  };
+  setIsMenuOpen(prev => !prev);
+};
+
 
   return (
     <div className="min-h-screen bg-gray-950 text-white overflow-x-hidden">
@@ -136,19 +142,18 @@ useEffect(() => {
               Get Started <FiArrowRight className="ml-2" />
             </button> */}
           </nav>
-          
-          <button 
-            className="md:hidden text-2xl z-50"
-            onClick={toggleMenu}
-          >
-            <FiMenu className="menu-open:hidden" />
-            <FiX className="hidden menu-open:block" />
+
+          <button className="md:hidden text-2xl z-50" onClick={toggleMenu}>
+            {isMenuOpen ? <FiX /> : <FiMenu />}
           </button>
+
         </div>
       </header>
 
       {/* Mobile Menu */}
-      <div className="fixed inset-0 bg-black/90 z-40 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-500 menu-open:opacity-100 menu-open:pointer-events-auto">
+      <div className={`fixed inset-0 bg-black/90 z-40 flex items-center justify-center transition-all duration-500
+  ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+      {/* <div className="fixed inset-0 bg-black/90 z-40 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-500 menu-open:opacity-100 menu-open:pointer-events-auto"> */}
         <nav className="flex flex-col items-center space-y-8 text-2xl">
           <a href="#services" className="hover:text-yellow-400 transition-colors" onClick={toggleMenu}>Services</a>
           <a href="#features" className="hover:text-yellow-400 transition-colors" onClick={toggleMenu}>Features</a>
